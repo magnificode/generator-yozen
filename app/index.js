@@ -51,7 +51,7 @@ ZenGen.prototype.askFor = function askFor() {
         {
             type: 'input',
             name: 'installZemplate',
-            message: 'To install a third party theme, enter it\'s download URL. (Leave blank to continue without). Not installing another theme will set your grunt file up using the twentyfourteen theme'
+            message: 'To install a third party theme, enter it\'s download URL. (Leave blank to continue without). Not installing another theme will set your grunt file up using the twentyfourteen theme',
             default: 'https://github.com/zenman/zemplate/archive/zemplate_3.1.zip'
         },
         {
