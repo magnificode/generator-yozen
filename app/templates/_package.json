@@ -1,0 +1,34 @@
+{
+  "name": "the-site",
+  "version": "0.0.0",
+  "description": "First gulp of gulp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.zenman.com:tcmulder/zen-grunt"
+  },
+  "author": "@tcmulder",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-compass": "*",
+    "gulp-livereload": "*",
+    "tiny-lr": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-iconfont": "*",
+    "gulp-iconfont-css": "*",
+    "gulp-exit": "*",
+    "gulp-uglifyjs": "*",
+    "gulp-jshint": "*",
+    "install": "*",
+    "npm": "*",
+    "gulp-svg-sprites": "*",
+    "gulp-shell": "*",
+    "gulp-imagemin": "*",
+    "gulp-notify": "*",
+    "gulp-cache": "*"
+  }
+}

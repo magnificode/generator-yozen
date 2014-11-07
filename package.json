@@ -1,0 +1,43 @@
+{
+  "name": "generator-yozen",
+  "version": "0.0.1",
+  "description": "A Yeoman generator to set up Wordpress, database, and general plugin installation. In addition this pulls in zenman's blank WP template along with gulp setup.",
+  "main": "index.js",
+  "scripts": {
+    "test": "zentestin"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/magnificode/generator-yozen.git"
+  },
+  "keywords": ["yeoman","yeoman-wordpress","gulp"],
+  "author": "Dominic Magnifico",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/magnificode/generator-yozen/issues"
+  },
+  "homepage": "https://github.com/magnificode/generator-yozen",
+  "dependencies": {
+      "yeoman-generator": "*",
+      "shelljs": "~0.2.6"
+  },
+  "devDependencies": {
+    "gulp": "*",
+    "npm": "*",
+    "gulp-compass": "*",
+    "gulp-livereload": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-iconfont": "*",
+    "gulp-iconfont-css": "*",
+    "gulp-exit": "*",
+    "gulp-uglifyjs": "*",
+    "gulp-jshint": "*",
+    "gulp-svg-sprites": "*",
+    "gulp-shell": "*",
+    "gulp-imagemin": "*",
+    "gulp-notify": "*",
+    "gulp-cache": "*",
+    "tiny-lr": "*",
+    "install": "*"
+  }
+}
