@@ -216,7 +216,7 @@ ZenGen.prototype.updateWpConfig = function updateWpConfig() {
     this.copy('wp-config.php.tmpl', 'wp-config.php');
 };
 // Update Zen Config
-ZenGen.prototype.updateWpConfig = function updateWpConfig() {
+ZenGen.prototype.updateZenConfig = function updateZenConfig() {
     this.log.writeln('\n*********************************\n** Adding the zen-config file **\n*********************************');
     this.copy('zen-config.php.tmpl', 'zen-config.php');
 };
@@ -224,7 +224,7 @@ ZenGen.prototype.updateWpConfig = function updateWpConfig() {
 //Create database
 ZenGen.prototype.CreateDatabase = function CreateDatabase() {
     this.log.writeln('\n***********************\n** Creating database **\n***********************');
-    shell.exec('mysql --user="root" --password="" -e "create database ' + this.dbName + '"');
+    shell.exec('mysql --user="root" --password="root" -e "create database l1_' + this.dbName + '"');
 };
 
 //Install Wordpress
@@ -238,8 +238,8 @@ ZenGen.prototype.UpdateThemeInDb = function UpdateThemeInDb() {
 
     this.log.writeln('\n********************************\n** Updating Theme in Database **\n********************************');
 
-    shell.exec('mysql --user="root" --password="" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'template\'"');
-    shell.exec('mysql --user="root" --password="" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'stylesheet\'"');
-    shell.exec('mysql --user="root" --password="" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'current_theme\'"');
+    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'template\'"');
+    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'stylesheet\'"');
+    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'current_theme\'"');
 
 };
