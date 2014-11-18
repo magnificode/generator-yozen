@@ -230,7 +230,7 @@ ZenGen.prototype.CreateDatabase = function CreateDatabase() {
 //Install Wordpress
 ZenGen.prototype.InstallWordpress = function InstallWordpress() {
     this.log.writeln('\n**************************\n** Installing Wordpress **\n**************************');
-    shell.exec('curl -d "weblog_title=' + this.siteTitle + '&user_name=' + this.adminUser + '&admin_password=' + this.adminPassword + '&admin_password2=' + this.adminPassword + '&admin_email=' + this.adminEmail + '" http://' + this.siteURL + '/wp-admin/install.php?step=2')
+    shell.exec('wp core install --url='+this.siteURL+' --title='+this.siteTitle+' --admin_user='+this.adminUser+' --admin_password='+this.adminPassword+' --admin_email='+this.adminEmail);
 };
 
 //Update theme in database
