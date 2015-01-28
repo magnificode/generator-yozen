@@ -1,18 +1,22 @@
-var util = require('util'),
-    path = require('path'),
-    yeoman = require('yeoman-generator'),
-    shell = require('shelljs');
+/*------------------------------------*\
+    ::So Basic.
+\*------------------------------------*/
+var util    = require('util'),
+    path    = require('path'),
+    yeoman  = require('yeoman-generator'),
+    wp      = require('wp-util'),
+    shell   = require('shelljs'),
+    Config  = require('../util/config');
 
-var ZenGen = module.exports = function ZenGen(args, options, config) {
+// Export the module
+module.exports = ZenGen;
+
+function ZenGen(args, options, config) {
     yeoman.generators.Base.apply(this, arguments);
 
-    this.on('end', function () {
-        this.installDependencies({ skipInstall: options['skip-install'] });
-    });
-
-    this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+    // Load the config files
+    this.conf = new Config();
 };
-
 util.inherits(ZenGen, yeoman.generators.Base);
 
 ZenGen.prototype.askFor = function askFor() {
@@ -30,7 +34,8 @@ ZenGen.prototype.askFor = function askFor() {
         {
             type: 'input',
             name: 'siteURL',
-            message: 'The Site URL (e.g. 10.0.1.254:8888/sites/zenman/zenman)'
+            message: 'The Site URL (e.g. 10.0.1.254:8888/sites/zenman/zenman)',
+            default: 'localhost:8888/sites/_sandbox/generator-yozen'
         },
         {
             type: 'input',
@@ -139,39 +144,38 @@ ZenGen.prototype.askFor = function askFor() {
         }
 
         cb();
+
     }.bind(this));
 };
 
-ZenGen.prototype.gruntFiles = function gruntFiles() {
+ZenGen.prototype.gruntFiles = function() {
     this.copy('_package.json', 'package.json');
     this.copy('_gulpfile.js', 'gulpfile.js');
 };
 
-ZenGen.prototype.LatestWordpress = function LatestWordpress() {
+ZenGen.prototype.latestWordpress = function() {
     var cb   = this.async();
-
     this.log.writeln('\n*************************************************\n** Downloading the latest Version of Wordpress **\n*************************************************');
     this.tarball('http://wordpress.org/latest.zip', './', cb);
 };
 
-ZenGen.prototype.MoveWP = function MoveWP() {
+ZenGen.prototype.moveWP = function() {
     shell.mv('wordpress/*', './');
     shell.rm('-rf', './wordpress/');
 };
 
-ZenGen.prototype.removeThemes= function removeThemes() {
+ZenGen.prototype.removeThemes= function() {
     this.log.writeln('\n*******************************************\n** Deleting the default Wordpress themes **\n*******************************************');
     shell.rm('-rf', './wp-content/themes/*');
-
 };
 
-ZenGen.prototype.Zemplate = function Zemplate() {
+ZenGen.prototype.Zemplate = function() {
 
     if( this.installZemplate ){
         var cb   = this.async();
 
         this.log.writeln('\n*********************************************************************\n** Downloading and installing your theme **\n********************************************************************');
-        this.tarball(this.installZemplate, 'wp-content/themes/' + this.themeName, cb);
+        this.tarball(this.installZemplate, 'wp-content/themes/', cb);
     }else{
         var cb   = this.async();
 
@@ -180,66 +184,99 @@ ZenGen.prototype.Zemplate = function Zemplate() {
     }
 };
 
-ZenGen.prototype.MoveTheme = function MoveTheme() {
-    shell.mv('wp-content/themes/zemplate-zemplate_3.1*', this.themeName);
+ZenGen.prototype.moveTheme = function() {
+    shell.mv('wp-content/themes/zemplate-zemplate_3.1/', 'wp-content/themes/' + this.themeName + '/');
+    // shell.rm('-rf', './wp-content/themes/zemplate-zemplate_3.1/');
 };
 
-ZenGen.prototype.acfWordpress = function acfWordpress() {
-    if( this.installAcf ){
+ZenGen.prototype.acfWordpress = function() {
+    if(this.installAcf ){
         var cb   = this.async();
 
         this.log.writeln('\n*****************************************************************************************************\n** Installing the latest Advanced Custom Fields **\n*****************************************************************************************************');
-        this.tarball('https://github.com/elliotcondon/acf/archive/master.tar.gz', 'wp-content/plugins/advanced-custom-fields', cb);
+        this.tarball('https://github.com/elliotcondon/acf/archive/master.tar.gz', 'wp-content/plugins', cb);
     }
 };
 
-ZenGen.prototype.yoastWordpress = function yoastWordpress() {
-    if( this.installYoast){
+ZenGen.prototype.yoastWordpress = function() {
+    if(this.installYoast){
         var cb   = this.async();
 
         this.log.writeln('\n*******************************************************************************************************************\n** Installing Yoast **\n*******************************************************************************************************************');
-        this.tarball('https://github.com/Yoast/wordpress-seo/archive/master.tar.gz', 'wp-content/plugins/wordpress-seo', cb);
+        this.tarball('https://github.com/Yoast/wordpress-seo/archive/master.tar.gz', 'wp-content/plugins', cb);
     }
 };
-ZenGen.prototype.gxmlWordpress = function gxmlWordpress() {
-    if( this.installGoogXML){
+ZenGen.prototype.gxmlWordpress = function() {
+    if(this.installGoogXML){
         var cb   = this.async();
 
         this.log.writeln('\n*******************************************************************************************************************\n** Installing Google XML **\n*******************************************************************************************************************');
-        this.tarball('https://downloads.wordpress.org/plugin/google-sitemap-generator.4.0.7.1.zip', 'wp-content/plugins/wordpress-seo', cb);
+        this.tarball('https://downloads.wordpress.org/plugin/google-sitemap-generator.4.0.7.1.zip', 'wp-content/plugins', cb);
     }
-};
-// Update WP Config
-ZenGen.prototype.updateWpConfig = function updateWpConfig() {
-    shell.rm('-rf', './wp-config.php');
-    this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
-    this.copy('wp-config.php.tmpl', 'wp-config.php');
-};
-// Update Zen Config
-ZenGen.prototype.updateZenConfig = function updateZenConfig() {
-    this.log.writeln('\n*********************************\n** Adding the zen-config file **\n*********************************');
-    this.copy('zen-config.php.tmpl', 'zen-config.php');
 };
 
 //Create database
-ZenGen.prototype.CreateDatabase = function CreateDatabase() {
+ZenGen.prototype.createDatabase = function() {
     this.log.writeln('\n***********************\n** Creating database **\n***********************');
     shell.exec('mysql --user="root" --password="root" -e "create database l1_' + this.dbName + '"');
 };
 
-//Install Wordpress
-ZenGen.prototype.InstallWordpress = function InstallWordpress() {
-    this.log.writeln('\n**************************\n** Installing Wordpress **\n**************************');
-    shell.exec('wp core install --url='+this.siteURL+' --title='+this.siteTitle+' --admin_user='+this.adminUser+' --admin_password='+this.adminPassword+' --admin_email='+this.adminEmail);
+// wp-config.php
+ZenGen.prototype.muHaHaHaConfig = function() {
+
+    var cb = this.async(),
+        me   = this;
+
+        me.log('Copying wp-config');
+        me.template('wp-config.php.tmpl', 'wp-config.php');
+        cb();
+
 };
+
+// zen-config.php
+ZenGen.prototype.zenConf = function() {
+    var cb = this.async(),
+        me   = this;
+
+        me.log('Copying wp-config');
+        me.template('zen-config.php.tmpl', 'zen-config.php');
+        cb();
+};
+
+//Install Wordpress
+// ZenGen.prototype.InstallWordpress = function InstallWordpress() {
+//     var cb = this.async();
+//     this.log.writeln('\n**************************\n** Installing Wordpress **\n**************************');
+//     shell.exec('wp core install --url='+this.siteURL+' --title='+this.siteTitle+' --admin_user='+this.adminUser+' --admin_password='+this.adminPassword+' --admin_email='+this.adminEmail);
+//     cb();
+// };
+
+// // Create Faux WP Config with local info
+// ZenGen.prototype.updateWpConfig = function updateWpConfig() {
+//     shell.rm('-rf', './wp-config.php');
+//     this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
+//     this.copy('wp-config.php.tmpl', 'wp-config.php');
+// };
+
+// // Update WP Config
+// ZenGen.prototype.updateWpConfig = function updateWpConfig() {
+//     shell.rm('-rf', './wp-config.php');
+//     this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
+//     this.copy('wp-config.php.tmpl', 'wp-config.php');
+// };
+// // Update Zen Config
+// ZenGen.prototype.updateZenConfig = function updateZenConfig() {
+//     this.log.writeln('\n*********************************\n** Adding the zen-config file **\n*********************************');
+//     this.copy('zen-config.php.tmpl', 'zen-config.php');
+// };
 
 //Update theme in database
-ZenGen.prototype.UpdateThemeInDb = function UpdateThemeInDb() {
+// ZenGen.prototype.UpdateThemeInDb = function UpdateThemeInDb() {
 
-    this.log.writeln('\n********************************\n** Updating Theme in Database **\n********************************');
+//     this.log.writeln('\n********************************\n** Updating Theme in Database **\n********************************');
 
-    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'template\'"');
-    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'stylesheet\'"');
-    shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'current_theme\'"');
+//     shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'template\'"');
+//     shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'stylesheet\'"');
+//     shell.exec('mysql --user="root" --password="root" -D l1_' + this.dbName + ' -e "UPDATE wp_options SET option_value = \'' + this.themeName + '\' WHERE option_name = \'current_theme\'"');
 
-};
+// };
