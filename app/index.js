@@ -19,7 +19,12 @@ function ZenGen(args, options, config) {
 };
 util.inherits(ZenGen, yeoman.generators.Base);
 
-ZenGen.prototype.askFor = function askFor() {
+
+/*------------------------------------*\
+    ::Whatchu Qant?
+\*------------------------------------*/
+
+ZenGen.prototype.whatChuWantHuh = function() {
     var cb = this.async();
 
     // have Yeoman greet the user.
@@ -148,23 +153,33 @@ ZenGen.prototype.askFor = function askFor() {
     }.bind(this));
 };
 
-ZenGen.prototype.gruntFiles = function() {
-    this.copy('_package.json', 'package.json');
-    this.copy('_gulpfile.js', 'gulpfile.js');
-};
 
-ZenGen.prototype.latestWordpress = function() {
+/*------------------------------------*\
+    ::Get Grunt Setup
+\*------------------------------------*/
+// ZenGen.prototype.gruntFiles = function() {
+//     this.copy('_package.json', 'package.json');
+//     this.copy('_gulpfile.js', 'gulpfile.js');
+// };
+
+/*------------------------------------*\
+    ::WP Core
+\*------------------------------------*/
+ZenGen.prototype.latestWordpress = function() { //Get's the latest version of WP.
     var cb   = this.async();
     this.log.writeln('\n*************************************************\n** Downloading the latest Version of Wordpress **\n*************************************************');
     this.tarball('http://wordpress.org/latest.zip', './', cb);
 };
 
-ZenGen.prototype.moveWP = function() {
+ZenGen.prototype.moveWP = function() { //Moves wp files from the wordpress folder, to the root of the project.
     shell.mv('wordpress/*', './');
     shell.rm('-rf', './wordpress/');
 };
 
-ZenGen.prototype.removeThemes= function() {
+/*------------------------------------*\
+    ::Theme Handling (be gentle)
+\*------------------------------------*/
+ZenGen.prototype.removeThemes= function() { //Gets zemplate
     this.log.writeln('\n*******************************************\n** Deleting the default Wordpress themes **\n*******************************************');
     shell.rm('-rf', './wp-content/themes/*');
 };
@@ -188,21 +203,16 @@ ZenGen.prototype.moveTheme = function() {
     shell.mv('wp-content/themes/zemplate-zemplate_3.1/', 'wp-content/themes/' + this.themeName + '/');
 };
 
-ZenGen.prototype.acfWordpress = function() {
-    if(this.installAcf ){
-        var cb   = this.async();
 
-        this.log.writeln('\n*****************************************************************************************************\n** Installing the latest Advanced Custom Fields **\n*****************************************************************************************************');
-        this.tarball('https://github.com/elliotcondon/acf/archive/master.tar.gz', 'wp-content/plugins', cb);
-    }
-};
-
+/*------------------------------------*\
+    ::PLUGIN PARTY WOOOOO!
+\*------------------------------------*/
 ZenGen.prototype.yoastWordpress = function() {
     if(this.installYoast){
         var cb   = this.async();
 
         this.log.writeln('\n*******************************************************************************************************************\n** Installing Yoast **\n*******************************************************************************************************************');
-        this.tarball('https://github.com/Yoast/wordpress-seo/archive/master.tar.gz', 'wp-content/plugins', cb);
+        this.tarball('https://github.com/Yoast/wordpress-seo/archive/1.7.1.zip', 'wp-content/plugins', cb);
     }
 };
 ZenGen.prototype.gxmlWordpress = function() {
@@ -213,6 +223,18 @@ ZenGen.prototype.gxmlWordpress = function() {
         this.tarball('https://downloads.wordpress.org/plugin/google-sitemap-generator.4.0.8.zip', 'wp-content/plugins', cb);
     }
 };
+ZenGen.prototype.resizeImagesBeforeUpload = function() {
+    if(this.installResizeImgs){
+        var cb   = this.async();
+
+        this.log.writeln('\n*******************************************************************************************************************\n** Installing Resize Images Before Upload **\n*******************************************************************************************************************');
+        this.tarball('https://downloads.wordpress.org/plugin/resize-images-before-upload.1.8.zip', 'wp-content/plugins', cb);
+    }
+};
+
+/*------------------------------------*\
+    ::Database
+\*------------------------------------*/
 
 //Create database
 ZenGen.prototype.createDatabase = function() {
@@ -220,8 +242,16 @@ ZenGen.prototype.createDatabase = function() {
     shell.exec('mysql --user="root" --password="root" -e "create database l1_' + this.dbName + '"');
 };
 
-// wp-config.php
-ZenGen.prototype.muHaHaHaConfig = function() {
+
+/*------------------------------------*\
+    ::WP Config Setup
+\*------------------------------------*/
+ZenGen.prototype.fauxWpConfig = function() { // Create Faux wp-config with local info this is used for the WP Setup.
+    this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
+    this.copy('zen-config.php.tmpl', 'wp-config.php');
+};
+
+ZenGen.prototype.muHaHaHaConfig = function() { //Set up real wp-config
 
     var cb = this.async(),
         me   = this;
@@ -232,8 +262,7 @@ ZenGen.prototype.muHaHaHaConfig = function() {
 
 };
 
-// zen-config.php
-ZenGen.prototype.zenConf = function() {
+ZenGen.prototype.zenConf = function() { //Set up zen-config for use on zenman servers
     var cb = this.async(),
         me   = this;
 
@@ -242,7 +271,10 @@ ZenGen.prototype.zenConf = function() {
         cb();
 };
 
-//Install Wordpress
+
+/*------------------------------------*\
+    ::Install Wordpress
+\*------------------------------------*/
 // ZenGen.prototype.InstallWordpress = function InstallWordpress() {
 //     var cb = this.async();
 //     this.log.writeln('\n**************************\n** Installing Wordpress **\n**************************');
@@ -250,26 +282,11 @@ ZenGen.prototype.zenConf = function() {
 //     cb();
 // };
 
-// // Create Faux WP Config with local info
-// ZenGen.prototype.updateWpConfig = function updateWpConfig() {
-//     shell.rm('-rf', './wp-config.php');
-//     this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
-//     this.copy('wp-config.php.tmpl', 'wp-config.php');
-// };
 
-// // Update WP Config
-// ZenGen.prototype.updateWpConfig = function updateWpConfig() {
-//     shell.rm('-rf', './wp-config.php');
-//     this.log.writeln('\n*********************************\n** Updating the wp-config file **\n*********************************');
-//     this.copy('wp-config.php.tmpl', 'wp-config.php');
-// };
-// // Update Zen Config
-// ZenGen.prototype.updateZenConfig = function updateZenConfig() {
-//     this.log.writeln('\n*********************************\n** Adding the zen-config file **\n*********************************');
-//     this.copy('zen-config.php.tmpl', 'zen-config.php');
-// };
+/*------------------------------------*\
+    ::WP Preferences
+\*------------------------------------*/
 
-//Update theme in database
 // ZenGen.prototype.UpdateThemeInDb = function UpdateThemeInDb() {
 
 //     this.log.writeln('\n********************************\n** Updating Theme in Database **\n********************************');
