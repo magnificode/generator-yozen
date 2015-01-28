@@ -186,7 +186,6 @@ ZenGen.prototype.Zemplate = function() {
 
 ZenGen.prototype.moveTheme = function() {
     shell.mv('wp-content/themes/zemplate-zemplate_3.1/', 'wp-content/themes/' + this.themeName + '/');
-    // shell.rm('-rf', './wp-content/themes/zemplate-zemplate_3.1/');
 };
 
 ZenGen.prototype.acfWordpress = function() {
@@ -211,7 +210,7 @@ ZenGen.prototype.gxmlWordpress = function() {
         var cb   = this.async();
 
         this.log.writeln('\n*******************************************************************************************************************\n** Installing Google XML **\n*******************************************************************************************************************');
-        this.tarball('https://downloads.wordpress.org/plugin/google-sitemap-generator.4.0.7.1.zip', 'wp-content/plugins', cb);
+        this.tarball('https://downloads.wordpress.org/plugin/google-sitemap-generator.4.0.8.zip', 'wp-content/plugins', cb);
     }
 };
 
