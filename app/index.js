@@ -80,8 +80,8 @@ ZenGen.prototype.whatChuWantHuh = function() {
         },
         {
             type: 'confirm',
-            name: 'installAcf',
-            message: 'Would you like to install the Advanced Custom Fields plugin?'
+            name: 'installResizeImgs',
+            message: 'Would you like to install the Resize Images Before Upload plugin?'
         },
         {
             type: 'confirm',
@@ -203,7 +203,6 @@ ZenGen.prototype.moveTheme = function() {
     shell.mv('wp-content/themes/zemplate-zemplate_3.1/', 'wp-content/themes/' + this.themeName + '/');
 };
 
-
 /*------------------------------------*\
     ::PLUGIN PARTY WOOOOO!
 \*------------------------------------*/
@@ -228,7 +227,7 @@ ZenGen.prototype.resizeImagesBeforeUpload = function() {
         var cb   = this.async();
 
         this.log.writeln('\n*******************************************************************************************************************\n** Installing Resize Images Before Upload **\n*******************************************************************************************************************');
-        this.tarball('https://downloads.wordpress.org/plugin/resize-images-before-upload.1.8.zip', 'wp-content/plugins', cb);
+        this.tarball('https://github.com/WPsites/Resize-images-before-upload/archive/1.8.zip', 'wp-content/plugins', cb);
     }
 };
 
@@ -252,14 +251,16 @@ ZenGen.prototype.fauxWpConfig = function() { // Create Faux wp-config with local
 };
 
 ZenGen.prototype.muHaHaHaConfig = function() { //Set up real wp-config
-
     var cb = this.async(),
         me   = this;
 
         me.log('Copying wp-config');
         me.template('wp-config.php.tmpl', 'wp-config.php');
         cb();
+};
 
+ZenGen.prototype.dieSampleConfig = function() { //Set up real wp-config
+    shell.rm('-rf', './wp-config-sample.php');
 };
 
 ZenGen.prototype.zenConf = function() { //Set up zen-config for use on zenman servers
@@ -270,7 +271,6 @@ ZenGen.prototype.zenConf = function() { //Set up zen-config for use on zenman se
         me.template('zen-config.php.tmpl', 'zen-config.php');
         cb();
 };
-
 
 /*------------------------------------*\
     ::Install Wordpress
